@@ -1,0 +1,83 @@
+import pyttsx3
+import speech_recognition as sr
+import datetime
+import os
+import wikipedia
+import pyWhatkit
+
+engine = pyttsx3.init('sapi5')
+voices = engine.getProperty('voices')
+engine.setProperty('voices',voices[0].id)
+
+def speak(audio):
+    engine.say(audio)
+    engine.runAndWait()
+
+def commands():
+    r=sr.Recognizer()
+    with sr.Microphone() as source:
+        print("Listening...")
+        r.pause_threshold=1
+        r.adjust_for_ambient_noise(source, duration=2) 
+        audio = r.listen(source)
+    try:
+        print("Wait for few moments....")
+        query=r.recognize_google(audio, language='en-in')
+        print(f"you justsaid: {query}\n")
+    except Exception as e:
+        print(e)
+        speak("Please tell me again")
+        query="none"
+    return query
+
+def wishings():
+    hour = int(datetime.datetime.now().hour)
+    if hour>=0 and hour<12:
+        print("good morning boss")
+        speak("good morning boss")
+    elif hour>=12 and hour<17:
+        print("good afternoon boss")
+        speak("good afternoon boss")
+    elif hour>=17 and hour<21:
+        print("good evening boss")
+        speak("good evening bodd")
+    else:
+        print("good night boss")
+        speak("good night boss")
+
+
+if __name__ == "__main__":
+    wishings()
+    query=commands().lower()
+    if'time' in query:
+        strtime=datetime.datetime.now().strftime("%H:%M")
+        speak(f"sir the time is {strtime}")
+        print(strtime)
+        speak(f"sir,the time is{strtime}")
+
+    elif 'open firefox' in query:
+        speak("opening firefox application sir...")
+        os.startfile(" ")
+
+    elif 'wikipedia' in query:
+        speak("searching in wikipedia...........")
+        try:
+            query=query.replace("wikipedia","")
+            results = wikipedia.summary(query,sentences=1)
+            speak("According to wikipedia,")
+            print(results)
+            speak(results)
+        except:
+            speak("no results found..")
+            print("no results found..")
+    elif 'play' in query:
+        query=query.replace('play','')
+        speak('Playing ' + query)
+        pyWhatkit.playonyt(query)
+
+    
+        
+
+
+
+    
